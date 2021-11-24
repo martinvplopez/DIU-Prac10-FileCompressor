@@ -22,7 +22,7 @@ import javax.swing.SwingWorker;
  * @author marti
  */
 public class Practica10 extends javax.swing.JFrame {
-    private Tarea tarea=null;
+    Tarea tarea;
     private String pathOrigin,pathDestino, nombreCarpeta;
     private File carpeta;
     List<String> files;
@@ -31,17 +31,21 @@ public class Practica10 extends javax.swing.JFrame {
     private JFileChooser fc= new JFileChooser();
     
     private class Tarea extends SwingWorker<Void,Void>{
+        Practica10 prac10;
+        public Tarea(Practica10 prac10){
+            this.prac10=prac10;
+        }
 
         @Override
         protected Void doInBackground() throws Exception {
            try{
                 BufferedInputStream origin = null;
-                FileOutputStream dest = new FileOutputStream(carpeta.getAbsolutePath() + "\\" + carpeta.getName() + ".zip");
+                FileOutputStream dest = new FileOutputStream(prac10.pathDestino+"\\folder.zip");
                 ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
                 int BUFFER_SIZE = 10000;
                 byte[] data = new byte[BUFFER_SIZE];
-                int size = 100 / filesPath.size();
-                Iterator i = filesPath.iterator();
+                int size = 100 / prac10.filesPath.size();
+                Iterator i = prac10.filesPath.iterator();
                 while(i.hasNext()){
                     String filename = (String)i.next();
                     FileInputStream fi = new FileInputStream(filename);
@@ -56,7 +60,6 @@ public class Practica10 extends javax.swing.JFrame {
                     progresBar.setValue(progresBar.getValue() + size);
                     Thread.sleep(100);
                 }
-                
                 out.close();
             } catch( Exception e ){
                 e.printStackTrace();
@@ -69,6 +72,7 @@ public class Practica10 extends javax.swing.JFrame {
         }
     
     }
+    
     
     public Practica10() {
         initComponents();
@@ -143,7 +147,13 @@ public class Practica10 extends javax.swing.JFrame {
 
         aboutMenu.setText("Ayuda");
 
+        aboutItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         aboutItem.setText("Acerca de");
+        aboutItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutItemActionPerformed(evt);
+            }
+        });
         aboutMenu.add(aboutItem);
 
         jMenuBar1.add(aboutMenu);
@@ -197,10 +207,12 @@ public class Practica10 extends javax.swing.JFrame {
          if(Arrays.asList(new File(pathDestino).list()).contains("folder.zip")){
             int res = JOptionPane.showConfirmDialog(this, "¿Desea sobreescribir el archivo 'folder.zip'?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (res == JOptionPane.OK_OPTION){
+                tarea=new Tarea(this);
                 tarea.execute();
                 endZip.setEnabled(true);
             }
         }else{
+                tarea=new Tarea(this);
                 tarea.execute();
                 endZip.setEnabled(true);
         }
@@ -237,6 +249,13 @@ public class Practica10 extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_selectDestinoItemActionPerformed
+
+    private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
+        JOptionPane.showMessageDialog(rootPane,  "Software que efectúa compresión de archivos y se visualiza el proceso.\n" +
+                                                 "Product Version: Compresión de archivos\n"+
+                                                 "Devs: @martinvplopez, @joelnavri"
+                        , "AYUDA", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_aboutItemActionPerformed
 
     /**
      * @param args the command line arguments
