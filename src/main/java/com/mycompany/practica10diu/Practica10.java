@@ -258,10 +258,8 @@ public class Practica10 extends javax.swing.JFrame {
             pathOrigin = carpeta.getAbsolutePath();
             files = Arrays.asList(fc.getSelectedFile().list());
             originLabel.setText("Se comprimirá la ruta: "+pathOrigin);
-            if(pathDestino.isEmpty()){
-                pathDestino = carpeta.getParent();
-                destinoLabel.setText("Destino de la compresión: " +pathDestino);
-            }
+            pathDestino = carpeta.getParent();
+            destinoLabel.setText("Destino de la compresión: " +pathDestino);
             nameLabel.setText("Nombre de la compresión: " + nombreCarpeta);
             beginZip.setEnabled(true);
         }
