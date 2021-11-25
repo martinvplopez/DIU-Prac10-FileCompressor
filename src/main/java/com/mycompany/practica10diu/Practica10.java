@@ -220,6 +220,7 @@ public class Practica10 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void beginZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_beginZipActionPerformed
+        progresBar.setValue(0);
         filesPath = toPath(jList1.getSelectedValuesList());
         if(Arrays.asList(new File(pathDestino).list()).contains(nombreCarpeta + ".zip")){
             int res = JOptionPane.showConfirmDialog(this, "¿Desea sobreescribir el archivo '"+ nombreCarpeta +".zip'?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
