@@ -25,27 +25,22 @@ public class Practica10 extends javax.swing.JFrame {
     Tarea tarea;
     private String pathOrigin,pathDestino, nombreCarpeta;
     private File carpeta;
-    List<String> files;
+    private List<String> files;
     private File[] archivosCarpeta;
     private List<String> filesPath = new ArrayList<>();
     private JFileChooser fc= new JFileChooser();
     
     private class Tarea extends SwingWorker<Void,Void>{
-        Practica10 prac10;
-        public Tarea(Practica10 prac10){
-            this.prac10=prac10;
-        }
-
         @Override
         protected Void doInBackground() throws Exception {
            try{
                 BufferedInputStream origin = null;
-                FileOutputStream dest = new FileOutputStream(prac10.pathDestino+"\\folder.zip");
+                FileOutputStream dest = new FileOutputStream(pathDestino+"\\" + nombreCarpeta + ".zip");
                 ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
                 int BUFFER_SIZE = 10000;
                 byte[] data = new byte[BUFFER_SIZE];
-                int size = 100 / prac10.filesPath.size();
-                Iterator i = prac10.filesPath.iterator();
+                int size = 100 / filesPath.size();
+                Iterator i = filesPath.iterator();
                 while(i.hasNext()){
                     String filename = (String)i.next();
                     FileInputStream fi = new FileInputStream(filename);
@@ -81,6 +76,7 @@ public class Practica10 extends javax.swing.JFrame {
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         originLabel.setText("No has seleccionado ninguna carpeta para comprimirla (Ctrl+O)");
         pathDestino="";
+        jList1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
 
@@ -94,10 +90,14 @@ public class Practica10 extends javax.swing.JFrame {
         progresLabel = new javax.swing.JLabel();
         originLabel = new javax.swing.JLabel();
         destinoLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        nameLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         selectItem = new javax.swing.JMenuItem();
         selectDestinoItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         aboutMenu = new javax.swing.JMenu();
         aboutItem = new javax.swing.JMenuItem();
 
@@ -123,6 +123,8 @@ public class Practica10 extends javax.swing.JFrame {
 
         originLabel.setText("No has seleccionado ninguna carpeta para comprimirla (Ctrl+O)");
 
+        jScrollPane1.setViewportView(jList1);
+
         fileMenu.setText("Archivo");
 
         selectItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -142,6 +144,15 @@ public class Practica10 extends javax.swing.JFrame {
             }
         });
         fileMenu.add(selectDestinoItem);
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem1.setText("Seleccionar nombre archivo comprimido");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMenuItem1);
 
         jMenuBar1.add(fileMenu);
 
@@ -165,22 +176,23 @@ public class Practica10 extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(54, 54, 54)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(progresLabel)
+                    .addComponent(progresBar, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
+                        .addComponent(beginZip)
+                        .addGap(76, 76, 76)
+                        .addComponent(endZip))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(progresLabel)
-                            .addComponent(progresBar, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(beginZip)
-                                .addGap(76, 76, 76)
-                                .addComponent(endZip))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(95, 95, 95)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(originLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(destinoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(175, Short.MAX_VALUE))
+                            .addComponent(nameLabel)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(originLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(destinoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addContainerGap(172, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,30 +201,35 @@ public class Practica10 extends javax.swing.JFrame {
                 .addComponent(originLabel)
                 .addGap(18, 18, 18)
                 .addComponent(destinoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addGap(18, 18, 18)
+                .addComponent(nameLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(beginZip)
                     .addComponent(endZip))
-                .addGap(32, 32, 32)
+                .addGap(18, 18, 18)
                 .addComponent(progresLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(progresBar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addGap(47, 47, 47))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void beginZipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_beginZipActionPerformed
-         if(Arrays.asList(new File(pathDestino).list()).contains("folder.zip")){
-            int res = JOptionPane.showConfirmDialog(this, "¿Desea sobreescribir el archivo 'folder.zip'?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        filesPath = toPath(jList1.getSelectedValuesList());
+        if(Arrays.asList(new File(pathDestino).list()).contains(nombreCarpeta + ".zip")){
+            int res = JOptionPane.showConfirmDialog(this, "¿Desea sobreescribir el archivo '"+ nombreCarpeta +".zip'?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (res == JOptionPane.OK_OPTION){
-                tarea=new Tarea(this);
+                tarea=new Tarea();
                 tarea.execute();
                 endZip.setEnabled(true);
             }
         }else{
-                tarea=new Tarea(this);
+                tarea=new Tarea();
                 tarea.execute();
                 endZip.setEnabled(true);
         }
@@ -227,20 +244,39 @@ public class Practica10 extends javax.swing.JFrame {
     }//GEN-LAST:event_carpetButtonActionPerformed
 
     private void selectItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectItemActionPerformed
-                int res = fc.showOpenDialog(this);
+        int res = fc.showOpenDialog(this);
         if (res == JFileChooser.APPROVE_OPTION) {
-            nombreCarpeta=fc.getSelectedFile().getName();
-            pathOrigin = fc.getSelectedFile().getAbsolutePath();
+            carpeta = fc.getSelectedFile();
+            
+            String[] names;
+            names = carpeta.list();
+            archivosCarpeta = carpeta.listFiles();
+            jList1.setListData(names);
+            
+            nombreCarpeta= carpeta.getName();
+            pathOrigin = carpeta.getAbsolutePath();
             files = Arrays.asList(fc.getSelectedFile().list());
             originLabel.setText("Se comprimirá la ruta: "+pathOrigin);
             if(pathDestino.isEmpty()){
-                pathDestino = fc.getSelectedFile().getParent();
+                pathDestino = carpeta.getParent();
                 destinoLabel.setText("Destino de la compresión: " +pathDestino);
             }
+            nameLabel.setText("Nombre de la compresión: " + nombreCarpeta);
             beginZip.setEnabled(true);
         }
     }//GEN-LAST:event_selectItemActionPerformed
 
+    private List<String> toPath(List<String> names){
+        List<String> res = new ArrayList<>();
+        for (String name : names) {
+            for (File file : archivosCarpeta) {
+                if(name.equals(file.getName()))
+                    res.add(file.getAbsolutePath());
+            }
+        }    
+        return res;
+    }
+    
     private void selectDestinoItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectDestinoItemActionPerformed
         int res = fc.showOpenDialog(this);
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -256,6 +292,12 @@ public class Practica10 extends javax.swing.JFrame {
                                                  "Devs: @martinvplopez, @joelnavri"
                         , "AYUDA", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutItemActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        nombreCarpeta = JOptionPane.showInputDialog(rootPane, "Introduzca el nombre del archivo.");
+        nameLabel.setText("Nombre de la compresión: " + nombreCarpeta);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -299,7 +341,11 @@ public class Practica10 extends javax.swing.JFrame {
     private javax.swing.JLabel destinoLabel;
     private javax.swing.JButton endZip;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel originLabel;
     private javax.swing.JProgressBar progresBar;
     private javax.swing.JLabel progresLabel;
